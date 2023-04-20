@@ -21,38 +21,18 @@ public class Port {
 
         int maxSize = 1;
 
-        for (int k = 1; k < groups.length; k++){
-            maxSize *= groups[k].length;
+        // Использую комбинаторику чтобы определить сколько уникальных значений может быть
+        for (int[] group : groups) {
+            maxSize *= group.length;
         }
 
-        for (int k = 0; k < groups[0].length; k++){
-            ArrayList<Integer> groupsForThisFirst = getAllGroups(groups, 1, new ArrayList<>(), maxSize);
+        // Состовляем все возможные комбинации
+        ArrayList<Integer> makeGroupsToOneArray = getAllGroups(groups, 0, new ArrayList<>(), maxSize);
 
-            result.addAll(makeGroupsForThisFirst(groups.length, groups[0][k], groupsForThisFirst));
-        }
+        // Формирую группы
+        result = makeGroups(groups.length, makeGroupsToOneArray);
 
         printResult(result);
-    }
-
-    private ArrayList<int[]> makeGroupsForThisFirst(int groupsLength, int first, ArrayList<Integer> groupsForThisFirst) {
-        ArrayList<int[]> result = new ArrayList<>();
-        int[] group = new int[groupsLength];
-        int p = 0;
-
-        for (int l = 0; l < groupsForThisFirst.size(); l++) {
-            if (l % (groupsLength - 1) == 0 && l != 0) {
-                result.add(group);
-            }
-            if (l % (groupsLength - 1) == 0) {
-                p = 0;
-                group = new int[groupsLength];
-                group[p] = first;
-            }
-            p++;
-            group[p] = groupsForThisFirst.get(l);
-        }
-        result.add(group);
-        return result;
     }
 
     private int[][] getGroups() {
@@ -70,18 +50,6 @@ public class Port {
         return groups;
     }
 
-    private static void printResult(ArrayList<int[]> result) {
-        StringBuilder printRes = new StringBuilder("{");
-
-        for (int[] group: result){
-            printRes.append(Arrays.toString(group));
-            printRes.append(", ");
-        }
-        printRes.delete(printRes.length() - 2, printRes.length());
-        printRes.append("}");
-        System.out.println(printRes);
-    }
-
     private ArrayList<Integer> getAllGroups(int[][] groups, int depth, ArrayList<Integer> savePath, int maxSize) {
         ArrayList<Integer> result = new ArrayList<>();
 
@@ -94,7 +62,8 @@ public class Port {
             return result;
         }
 
-        for(int i = depth; i < groups.length - 1 && (result.size()/(groups.length - 1)) != maxSize; i++){
+        // Рекурсивно формирую группы в одну строку
+        for(int i = depth; i < groups.length - 1 && (result.size()/(groups.length)) != maxSize; i++){
             for (int k = 0; k < groups[i].length; k++) {
                 if (depth != groups.length - 1) {
                     savePath.add(groups[i][k]);
@@ -105,6 +74,36 @@ public class Port {
             }
         }
         return result;
+    }
+
+    private ArrayList<int[]> makeGroups(int groupsLength, ArrayList<Integer> groupsForThisFirst) {
+        ArrayList<int[]> result = new ArrayList<>();
+        int[] group = new int[groupsLength];
+        int p = 0;
+
+        for (int l = 0; l < groupsForThisFirst.size(); l++) {
+            if (l % (groupsLength) == 0 && l != 0) {
+                result.add(group);
+                group = new int[groupsLength];
+                p = 0;
+            }
+            group[p] = groupsForThisFirst.get(l);
+            p++;
+        }
+        result.add(group);
+        return result;
+    }
+
+    private static void printResult(ArrayList<int[]> result) {
+        StringBuilder printRes = new StringBuilder("{");
+
+        for (int[] group: result){
+            printRes.append(Arrays.toString(group));
+            printRes.append(", ");
+        }
+        printRes.delete(printRes.length() - 2, printRes.length());
+        printRes.append("}");
+        System.out.println(printRes);
     }
 
     private int[] stringIndexesToInteger(String[] indexes){
