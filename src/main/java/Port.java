@@ -19,8 +19,15 @@ public class Port {
 
         ArrayList<int[]> result = new ArrayList<>();
 
+        int maxSize = 1;
+
+        // Использую комбинаторику чтобы определить сколько уникальных значений может быть
+        for (int[] group : groups) {
+            maxSize *= group.length;
+        }
+
         // Состовляем все возможные комбинации
-        ArrayList<Integer> makeGroupsToOneArray = getAllGroups(groups, 0, new ArrayList<>());
+        ArrayList<Integer> makeGroupsToOneArray = getAllGroups(groups, 0, new ArrayList<>(), maxSize);
 
         // Формирую группы
         result = makeGroups(groups.length, makeGroupsToOneArray);
@@ -43,7 +50,7 @@ public class Port {
         return groups;
     }
 
-    private ArrayList<Integer> getAllGroups(int[][] groups, int depth, ArrayList<Integer> savePath) {
+    private ArrayList<Integer> getAllGroups(int[][] groups, int depth, ArrayList<Integer> savePath, int maxSize) {
         ArrayList<Integer> result = new ArrayList<>();
 
         if (depth == groups.length - 1) {
@@ -55,16 +62,14 @@ public class Port {
         }
 
         // Рекурсивно формирую группы в одну строку
-        for(int i = depth; i < groups.length - 1; i++){
-            for (int k = 0; k < groups[i].length - 1; k++) {
+            for (int k = 0; k < groups[depth].length && (result.size()/(groups.length)) != maxSize; k++) {
                 if (depth != groups.length - 1) {
-                    savePath.add(groups[i][k]);
-                    result.addAll(getAllGroups(groups, ++depth, savePath));
+                    savePath.add(groups[depth][k]);
+                    result.addAll(getAllGroups(groups, ++depth, savePath, maxSize));
                     savePath.remove(savePath.size() - 1);
                     depth--;
                 }
             }
-        }
         return result;
     }
 
