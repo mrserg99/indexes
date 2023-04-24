@@ -6,6 +6,8 @@ public class Port {
     private String[] indexes;
     private int[] integerIndexes;
 
+    private ArrayList<int[]> groupsOfInteger;
+
     Port(String[] indexes){
         this.indexes = indexes;
     }
@@ -25,7 +27,7 @@ public class Port {
         // Формирую группы
         result = makeGroups(groups.length, makeGroupsToOneArray);
 
-        printResult(result);
+        this.groupsOfInteger = result;
     }
 
     private int[][] getGroups() {
@@ -55,14 +57,14 @@ public class Port {
         }
 
         // Рекурсивно формирую группы в одну строку
-            for (int k = 0; k < groups[depth].length; k++) {
-                if (depth != groups.length - 1) {
-                    savePath.add(groups[depth][k]);
-                    result.addAll(getAllGroups(groups, ++depth, savePath));
-                    savePath.remove(savePath.size() - 1);
-                    depth--;
-                }
+        for (int k = 0; k < groups[depth].length; k++) {
+            if (depth != groups.length - 1) {
+                savePath.add(groups[depth][k]);
+                result.addAll(getAllGroups(groups, ++depth, savePath));
+                savePath.remove(savePath.size() - 1);
+                depth--;
             }
+        }
         return result;
     }
 
@@ -84,10 +86,10 @@ public class Port {
         return result;
     }
 
-    private static void printResult(ArrayList<int[]> result) {
+    public void printGroups() {
         StringBuilder printRes = new StringBuilder("{");
 
-        for (int[] group: result){
+        for (int[] group: groupsOfInteger){
             printRes.append(Arrays.toString(group));
             printRes.append(", ");
         }
@@ -152,5 +154,13 @@ public class Port {
 
     public int[] getIntegerIndexes() {
         return integerIndexes;
+    }
+
+    public ArrayList<int[]> getGroupsOfInteger() {
+        return groupsOfInteger;
+    }
+
+    public void setGroupsOfInteger(ArrayList<int[]> groupsOfInteger) {
+        this.groupsOfInteger = groupsOfInteger;
     }
 }
